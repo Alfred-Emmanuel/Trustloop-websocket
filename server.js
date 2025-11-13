@@ -1,5 +1,5 @@
 /**
- * src/ws/server.js
+ * src/ws/server.js (ESM version)
  *
  * Local mock WebSocket server + small HTTP /broadcast endpoint.
  * - Run with: npm run ws
@@ -8,10 +8,11 @@
  * NOTE: This is a local dev/mock server. Replace with production pub/sub in real deployments.
  */
 
-const http = require("http");
-const WebSocket = require("ws");
+import http from "http";
+import { WebSocketServer, WebSocket } from "ws";
 
 const PORT = process.env.WS_PORT || 4001;
+
 const server = http.createServer((req, res) => {
   if (req.method === "POST" && req.url === "/broadcast") {
     let body = "";
@@ -47,7 +48,7 @@ const server = http.createServer((req, res) => {
   res.end();
 });
 
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocketServer({ server });
 
 wss.on("connection", (socket, req) => {
   const id = Math.random().toString(36).slice(2, 9);
@@ -59,7 +60,6 @@ wss.on("connection", (socket, req) => {
   });
 
   socket.on("message", (message) => {
-    // For debugging if browser client sends anything
     console.log(`[ws] received from client (${id}):`, message.toString());
   });
 });
